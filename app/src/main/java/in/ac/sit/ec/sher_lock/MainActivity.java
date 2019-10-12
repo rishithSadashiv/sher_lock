@@ -1,5 +1,7 @@
 package in.ac.sit.ec.sher_lock;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.EventListener;
 import java.util.HashMap;
 
@@ -37,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
     static String link = "https://firebasestorage.googleapis.com/v0/b/badhackathon.appspot.com/o/known.png?alt=media";
     static String link2 = "https://firebasestorage.googleapis.com/v0/b/badhackathon.appspot.com/o/unknown.png?alt=media";
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +115,84 @@ public class MainActivity extends AppCompatActivity {
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
-                startActivity(getIntent());
+
+                knownParam.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        known = dataSnapshot.getValue(boolean.class);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                image.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+//                String link1 = dataSnapshot.getValue(String.class);
+                        if (known)
+                            Picasso.get().load(link).into(imageView);
+                        else
+                            Picasso.get().load(link2).into(imageView);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                someName.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String val2 = dataSnapshot.getValue(String.class);
+
+                        System.out.println(val2);
+//                try {
+////                    if (val2 == null || val2.isEmpty())
+////                        imName.setText("Unknown Person");
+////                    else
+////                        imName.setText(val2);
+//                } catch (Exception e) {
+//                    imName.setText("Unknown Person");
+//                }
+                        imName.setText(val2);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+
+
+
+
+
+//                finish();
+//                startActivity(getIntent());
+
+//                Context context = getApplicationContext();
+//                context.getCacheDir().deleteOnExit();
+//
+//
+//                finish();
+//                overridePendingTransition(0, 0);
+//                startActivity(getIntent());
+//                overridePendingTransition(0, 0);
+//
+
+
+
 //                someName.addListenerForSingleValueEvent(new ValueEventListener() {
 //                    @Override
 //                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -178,10 +260,11 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 //                String link1 = dataSnapshot.getValue(String.class);
-                if(known)
+                if (known)
                     Picasso.get().load(link).into(imageView);
                 else
                     Picasso.get().load(link2).into(imageView);
+
             }
 
             @Override
@@ -214,4 +297,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
+
+
 }
